@@ -1,0 +1,31 @@
+name: bug_tracker
+services:
+  db:
+    image: mysql:9.2
+    restart: always
+    volumes:
+      - db-data:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=${DATABASE_NAME}
+      - MYSQL_USER=${DATABASE_USER}
+      - MYSQL_PASSWORD=${DATABASE_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${DATABASE_ROOT_PASSWORD}
+    ports:
+      - "3306:3306"
+  web:
+    build: .
+    command: > 
+      bash -c "python ./bug_tracker/manage.py wait_for_db &&
+               python ./bug_tracker/manage.py migrate &&
+               python ./bug_tracker/manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      - db
+
+volumes:
+  db-data:

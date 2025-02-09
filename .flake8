@@ -1,0 +1,4 @@
+[flake8]
+ignore = W503,E704,E203
+per-file-ignores = **/bug_tracker/settings/**.py:F401,F403
+max-line-length = 120
