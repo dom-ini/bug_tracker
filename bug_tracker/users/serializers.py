@@ -9,7 +9,6 @@ from dj_rest_auth.serializers import (
     PasswordChangeSerializer,
     PasswordResetConfirmSerializer,
     PasswordResetSerializer,
-    UserDetailsSerializer,
 )
 from django.http import HttpRequest
 from rest_framework import serializers
@@ -118,9 +117,9 @@ class CustomPasswordResetConfirmSerializer(PasswordResetConfirmSerializer):
 class CustomPasswordChangeSerializer(PasswordChangeSerializer):
     new_password1 = None
     new_password2 = None
-    set_password_form_class = CustomSetPasswordForm
-
     new_password = serializers.CharField(write_only=True)
+
+    set_password_form_class = CustomSetPasswordForm
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
@@ -129,7 +128,3 @@ class CustomPasswordChangeSerializer(PasswordChangeSerializer):
     def save(self) -> None:
         super().save()
         self.adapter.send_notification_mail("account/email/password_changed", self.user)
-
-
-class CustomUserDetailsSerializer(UserDetailsSerializer):
-    pass
