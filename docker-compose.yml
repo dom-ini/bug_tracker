@@ -1,17 +1,18 @@
 name: bug_tracker
 services:
   db:
-    image: mysql:9.2
+    image: postgres:17
     restart: always
     volumes:
-      - db-data:/var/lib/mysql
+      - db-data:/var/lib/postgresql/data
     environment:
-      - MYSQL_DATABASE=${DATABASE_NAME}
-      - MYSQL_USER=${DATABASE_USER}
-      - MYSQL_PASSWORD=${DATABASE_PASSWORD}
-      - MYSQL_ROOT_PASSWORD=${DATABASE_ROOT_PASSWORD}
+      - POSTGRES_DB=${DATABASE_NAME}
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - POSTGRES_SERVER=${DATABASE_SERVER}
+      - PGDATA=/var/lib/postgresql/data
     ports:
-      - "3306:3306"
+      - "5432:5432"
   web:
     build: .
     command: > 
