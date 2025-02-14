@@ -10,10 +10,13 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+from datetime import timedelta
 from pathlib import Path
 
 from decouple import Csv, config
 from dj_database_url import parse as db_url
+
+from bug_tracker.url_resolver import FrontendUrlType
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -26,7 +29,6 @@ SECRET_KEY = config("SECRET_KEY")
 
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=Csv(), default=[])
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -36,7 +38,21 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "drf_spectacular",
+    "drf_spectacular_sidecar",
+    "rest_framework",
+    "rest_framework.authtoken",
+    "rest_framework_simplejwt.token_blacklist",
+    "dj_rest_auth",
+    "django.contrib.sites",
+    "allauth",
+    "allauth.account",
+    "dj_rest_auth.registration",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.github",
+    "allauth.socialaccount.providers.google",
     "core",
+    "users",
 ]
 
 MIDDLEWARE = [
@@ -47,6 +63,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
 ]
 
 ROOT_URLCONF = "bug_tracker.urls"
@@ -67,17 +84,25 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "bug_tracker.wsgi.application"
+SECURE_CONTENT_TYPE_NOSNIFF = True
 
+WSGI_APPLICATION = "bug_tracker.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {"default": config("DATABASE_URL", cast=db_url)}
 
-
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
+
+PASSWORD_HASHERS = [
+    "django.contrib.auth.hashers.Argon2PasswordHasher",
+    "django.contrib.auth.hashers.PBKDF2PasswordHasher",
+    "django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher",
+    "django.contrib.auth.hashers.BCryptSHA256PasswordHasher",
+    "django.contrib.auth.hashers.ScryptPasswordHasher",
+]
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -85,6 +110,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "OPTIONS": {"min_length": 12},
     },
     {
         "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
@@ -92,8 +118,9 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
+    {"NAME": "users.validators.RequiredCharactersPasswordValidator"},
+    {"NAME": "users.validators.RepeatingCharactersPasswordValidator"},
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
@@ -106,7 +133,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
@@ -116,3 +142,74 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+DEFAULT_RENDERER_CLASSES = [
+    "rest_framework.renderers.JSONRenderer",
+]
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Your Project API",
+    "DESCRIPTION": "Your project description",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SWAGGER_UI_DIST": "SIDECAR",
+    "SWAGGER_UI_FAVICON_HREF": "SIDECAR",
+}
+
+ACCOUNT_USERNAME_MIN_LENGTH = 5
+ACCOUNT_USERNAME_VALIDATORS = "users.validators.username_validators"
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_CHANGE_EMAIL = True
+ACCOUNT_EMAIL_NOTIFICATIONS = True
+ACCOUNT_LOGIN_METHODS = {"username"}
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_PREVENT_ENUMERATION = True
+ACCOUNT_HEADLESS_ENABLED = True
+ACCOUNT_ADAPTER = "users.adapters.CustomAccountAdapter"
+
+PASSWORD_RESET_TIMEOUT = 60 * 20
+
+FRONTEND_URLS: dict[FrontendUrlType, str] = {
+    FrontendUrlType.BASE: config("FRONT_HOST"),
+    FrontendUrlType.RESET_PASSWORD: "reset-password",
+    FrontendUrlType.VERIFY_EMAIL: "verify-email",
+}
+
+AUTHENTICATION_BACKENDS = {
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+}
+
+REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_AUTHENTICATION_CLASSES": ("dj_rest_auth.jwt_auth.JWTCookieAuthentication",),
+    "DEFAULT_RENDERER_CLASSES": DEFAULT_RENDERER_CLASSES,
+    "DEFAULT_PARSER_CLASSES": [
+        "rest_framework.parsers.JSONParser",
+    ],
+}
+
+REST_AUTH = {
+    "USE_JWT": True,
+    "JWT_AUTH_COOKIE": "bt-auth",
+    "JWT_AUTH_REFRESH_COOKIE": "bt-refresh",
+    "JWT_AUTH_RETURN_EXPIRATION": True,
+    "LOGIN_SERIALIZER": "users.serializers.CustomLoginSerializer",
+    "REGISTER_SERIALIZER": "users.serializers.CustomRegisterSerializer",
+    "PASSWORD_RESET_SERIALIZER": "users.serializers.CustomPasswordResetSerializer",
+    "PASSWORD_RESET_CONFIRM_SERIALIZER": "users.serializers.CustomPasswordResetConfirmSerializer",
+    "PASSWORD_CHANGE_SERIALIZER": "users.serializers.CustomPasswordChangeSerializer",
+    "OLD_PASSWORD_FIELD_ENABLED": True,
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+}
+
+AUTH_USER_MODEL = "users.CustomUser"
+
+SITE_ID = 1

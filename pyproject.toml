@@ -22,7 +22,14 @@ version = "0.1.0"
 
 [tool.poetry.dependencies]
 dj-database-url = "^2.3.0"
-django = "^5.1.5"
+dj-rest-auth = {extras = ["with-social"], version = "^7.0.1"}
+django = {extras = ["argon2"], version = "^5.1.6"}
+django-filter = "^24.3"
+djangorestframework = "^3.15.2"
+djangorestframework-simplejwt = "^5.4.0"
+drf-spectacular = "^0.28.0"
+drf-spectacular-sidecar = "^2025.2.1"
+markdown = "^3.7"
 mysqlclient = "^2.2.7"
 psycopg2-binary = "^2.9.10"
 python = "^3.12"
