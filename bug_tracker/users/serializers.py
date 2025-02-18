@@ -14,7 +14,7 @@ from django.http import HttpRequest
 from rest_framework import serializers
 from users.forms import CustomSetPasswordForm
 from users.models import CustomUser
-from users.url_resolver import generate_reset_password_url
+from users.url_generators import generate_reset_password_url
 
 
 class HasCleanedDataT(Protocol):

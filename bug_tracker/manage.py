@@ -1,22 +1,13 @@
 #!/usr/bin/env python
 """Django's command-line utility for administrative tasks."""
-import os
 import sys
-from enum import Enum
 
-from decouple import config
-
-
-class Environment(str, Enum):
-    DEVELOPMENT = "development"
-    PRODUCTION = "production"
+from bug_tracker.environments import set_django_settings_module
 
 
 def main():
     """Run administrative tasks."""
-    environment = config("ENVIRONMENT", default=Environment.PRODUCTION)
-    settings_module = f"bug_tracker.settings.{environment}"
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", settings_module)
+    set_django_settings_module()
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

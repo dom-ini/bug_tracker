@@ -1,9 +1,8 @@
 from allauth.account.adapter import DefaultAccountAdapter
 from allauth.account.models import EmailConfirmation
+from core.url_resolver import FrontendUrlType, resolve_front_url
 from django.http import HttpRequest
-from users.url_resolver import generate_email_confirmation_url
-
-from bug_tracker.url_resolver import FrontendUrlType, resolve_front_url
+from users.url_generators import generate_email_confirmation_url
 
 
 class CustomAccountAdapter(DefaultAccountAdapter):

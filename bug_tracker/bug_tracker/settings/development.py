@@ -11,4 +11,4 @@ REST_AUTH.update(
     }
 )
 
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+CORE_EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"

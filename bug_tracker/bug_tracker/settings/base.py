@@ -13,10 +13,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from datetime import timedelta
 from pathlib import Path
 
+from core.url_resolver import FrontendUrlType
 from decouple import Csv, config
 from dj_database_url import parse as db_url
-
-from bug_tracker.url_resolver import FrontendUrlType
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -147,6 +146,8 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+EMAIL_BACKEND = "core.email_backend.AsyncEmailBackend"
+
 DEFAULT_RENDERER_CLASSES = [
     "rest_framework.renderers.JSONRenderer",
 ]
@@ -237,5 +238,9 @@ AXES_COOLOFF_TIME = 1
 AXES_RESET_ON_SUCCESS = True
 AXES_VERBOSE = True
 AXES_HANDLER = "axes.handlers.database.AxesDatabaseHandler"
+
+CELERY_BROKER_URL = config("BROKER_URL")
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
 
 SITE_ID = 1

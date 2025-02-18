@@ -15,3 +15,5 @@ REST_AUTH.update(
         "JWT_AUTH_SECURE": True,
     }
 )
+
+CORE_EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"

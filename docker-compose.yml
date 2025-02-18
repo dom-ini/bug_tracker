@@ -15,10 +15,11 @@ services:
       - "5432:5432"
   web:
     build: .
-    command: > 
-      bash -c "python ./bug_tracker/manage.py wait_for_db &&
-               python ./bug_tracker/manage.py migrate &&
-               python ./bug_tracker/manage.py runserver 0.0.0.0:8000"
+    working_dir: /app/bug_tracker
+    command: >
+      bash -c "python manage.py wait_for_db &&
+               python manage.py migrate &&
+               python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/app
     ports:
@@ -27,6 +28,31 @@ services:
       - .env
     depends_on:
       - db
-
+  redis:
+    image: redis:7-alpine
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+  celery:
+    build: .
+    command: celery -A bug_tracker worker --loglevel INFO
+    working_dir: /app/bug_tracker
+    depends_on:
+      - redis
+      - web
+    volumes:
+      - .:/app
+  flower:
+    build: .
+    working_dir: /app/bug_tracker
+    command: celery -A bug_tracker flower --port=5555 --loglevel INFO
+    depends_on:
+      - redis
+      - celery
+    ports:
+      - "5555:5555"
 volumes:
   db-data:
+  redis-data:
