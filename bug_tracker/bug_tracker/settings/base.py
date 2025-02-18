@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     "allauth.socialaccount.providers.github",
     "allauth.socialaccount.providers.google",
+    "axes",
     "core",
     "users",
 ]
@@ -64,6 +65,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
+    "axes.middleware.AxesMiddleware",
 ]
 
 ROOT_URLCONF = "bug_tracker.urls"
@@ -85,6 +87,8 @@ TEMPLATES = [
 ]
 
 SECURE_CONTENT_TYPE_NOSNIFF = True
+
+ADMIN_PANEL_URL = config("ADMIN_PANEL_URL")
 
 WSGI_APPLICATION = "bug_tracker.wsgi.application"
 
@@ -177,6 +181,7 @@ FRONTEND_URLS: dict[FrontendUrlType, str] = {
 }
 
 AUTHENTICATION_BACKENDS = {
+    "axes.backends.AxesStandaloneBackend",
     "django.contrib.auth.backends.ModelBackend",
     "allauth.account.auth_backends.AuthenticationBackend",
 }
@@ -188,6 +193,9 @@ REST_FRAMEWORK = {
     "DEFAULT_PARSER_CLASSES": [
         "rest_framework.parsers.JSONParser",
     ],
+    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 20,
 }
 
 REST_AUTH = {
@@ -211,5 +219,12 @@ SIMPLE_JWT = {
 }
 
 AUTH_USER_MODEL = "users.CustomUser"
+
+AXES_ENABLED = True
+AXES_FAILURE_LIMIT = 5
+AXES_COOLOFF_TIME = 1
+AXES_RESET_ON_SUCCESS = True
+AXES_VERBOSE = True
+AXES_HANDLER = "axes.handlers.database.AxesDatabaseHandler"
 
 SITE_ID = 1
