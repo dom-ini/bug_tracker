@@ -2,9 +2,8 @@ import sys
 from pathlib import Path
 
 from celery import Celery
+from core.environments import set_django_settings_module
 from django.conf import settings
-
-from bug_tracker.environments import set_django_settings_module
 
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 

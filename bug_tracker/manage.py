@@ -2,7 +2,7 @@
 """Django's command-line utility for administrative tasks."""
 import sys
 
-from bug_tracker.environments import set_django_settings_module
+from core.environments import set_django_settings_module
 
 
 def main():

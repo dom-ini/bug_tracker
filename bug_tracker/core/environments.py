@@ -9,8 +9,12 @@ class Environment(str, Enum):
     PRODUCTION = "production"
 
 
+def get_environment() -> str:
+    return config("ENVIRONMENT", default=Environment.PRODUCTION.value)
+
+
 def get_settings_module() -> str:
-    environment = config("ENVIRONMENT", default=Environment.PRODUCTION)
+    environment = get_environment()
     settings_module = f"bug_tracker.settings.{environment}"
     return settings_module
 
