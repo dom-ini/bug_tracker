@@ -45,8 +45,19 @@ djlint = "^1.36.4"
 flake8 = "^7.1.1"
 isort = "^6.0.0"
 pre-commit = "^4.1.0"
+pytest-django = "^4.10.0"
+pytest-mock = "^3.14.0"
 ruff = "^0.9.4"
 toml-sort = "^0.24.2"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "bug_tracker.settings.development"
+markers = [
+  "e2e",
+  "integration",
+  "unit"
+]
+python_files = ["*_tests.py", "test_*.py", "tests.py"]
 
 [tool.ruff.lint.per-file-ignores]
 "**/bug_tracker/settings/**.py" = ["F401", "F403"]

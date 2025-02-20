@@ -35,3 +35,11 @@ repos:
     rev: v0.9.4
     hooks:
       - id: ruff
+
+  - repo: local
+    hooks:
+      - id: pytestmark-check
+        name: Check pytestmark in test files
+        entry: python scripts/check_pytestmark.py
+        language: python
+        types: [python]
