@@ -9,9 +9,9 @@ class FrontendUrlType(str, Enum):
     VERIFY_EMAIL = "VERIFY_EMAIL"
 
 
-def resolve_front_url(url_type: FrontendUrlType) -> str:
+def resolve_front_url(url_type: FrontendUrlType | str) -> str:
     if url_type not in settings.FRONTEND_URLS:
-        raise ValueError(f"{url_type} is not defined in FRONTEND_URLS")
+        raise ValueError(f"{url_type} is not defined in settings.FRONTEND_URLS")
     url = settings.FRONTEND_URLS[url_type]
     if url_type == FrontendUrlType.BASE:
         return url
