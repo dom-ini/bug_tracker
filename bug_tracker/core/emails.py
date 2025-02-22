@@ -1,4 +1,5 @@
 from dataclasses import asdict, dataclass
+from typing import Sequence
 
 from django.core.mail import EmailMessage
 
@@ -37,9 +38,9 @@ class EmailMessageData:
         )
 
 
-def serialize_email_messages(messages: list[EmailMessage]) -> list[dict]:
+def serialize_email_messages(messages: Sequence[EmailMessage]) -> Sequence[dict]:
     return [asdict(EmailMessageData.from_email_message(message)) for message in messages]
 
 
-def deserialize_email_messages(messages: list[dict]) -> list[EmailMessage]:
+def deserialize_email_messages(messages: Sequence[dict]) -> Sequence[EmailMessage]:
     return [EmailMessageData(**message).to_email_message() for message in messages]
