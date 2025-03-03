@@ -1,10 +1,10 @@
 from allauth.account.utils import user_pk_to_url_str
 from core.url_resolver import FrontendUrlType, resolve_front_url
+from django.contrib.auth.base_user import AbstractBaseUser
 from django.http import HttpRequest
-from users.models import CustomUser
 
 
-def generate_reset_password_url(_request: HttpRequest, user: CustomUser, key: str) -> str:
+def generate_reset_password_url(_request: HttpRequest, user: AbstractBaseUser, key: str) -> str:
     url = f"{resolve_front_url(FrontendUrlType.RESET_PASSWORD)}/{user_pk_to_url_str(user)}/{key}"
     return url
 

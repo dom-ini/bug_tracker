@@ -10,10 +10,10 @@ from dj_rest_auth.serializers import (
     PasswordResetConfirmSerializer,
     PasswordResetSerializer,
 )
+from django.contrib.auth.base_user import AbstractBaseUser
 from django.http import HttpRequest
 from rest_framework import serializers
 from users.forms import CustomSetPasswordForm
-from users.models import CustomUser
 from users.url_generators import generate_reset_password_url
 
 
@@ -28,17 +28,17 @@ class AccountAdapterT(Protocol):
 
     def send_account_already_exists_mail(self, email: str) -> None: ...
 
-    def send_notification_mail(self, template_prefix: str, user: CustomUser) -> None: ...
+    def send_notification_mail(self, template_prefix: str, user: AbstractBaseUser) -> None: ...
 
-    def new_user(self, request: HttpRequest) -> CustomUser: ...
+    def new_user(self, request: HttpRequest) -> AbstractBaseUser: ...
 
     def save_user(
         self,
         request: HttpRequest,
-        user: CustomUser,
+        user: AbstractBaseUser,
         form: HasCleanedDataT,
         commit: bool,
-    ) -> CustomUser: ...
+    ) -> AbstractBaseUser: ...
 
 
 class CustomRegisterSerializer(RegisterSerializer):
@@ -74,7 +74,7 @@ class CustomRegisterSerializer(RegisterSerializer):
     def _check_email_already_used(self, email: str) -> bool:
         return email and EmailAddress.objects.is_verified(email)
 
-    def save(self, request: HttpRequest) -> CustomUser | None:
+    def save(self, request: HttpRequest) -> AbstractBaseUser | None:
         self.cleaned_data = self.get_cleaned_data()
         email = self.cleaned_data.get("email", "")
 

@@ -4,7 +4,7 @@ from allauth.account import app_settings as allauth_account_settings
 from allauth.account.utils import complete_signup
 from dj_rest_auth.registration.views import RegisterView, ResendEmailVerificationView
 from dj_rest_auth.views import PasswordResetView
-from users.models import CustomUser
+from django.contrib.auth.base_user import AbstractBaseUser
 
 
 class EmailThrottleScopeMixin:
@@ -15,7 +15,7 @@ class CustomRegisterView(EmailThrottleScopeMixin, RegisterView):
     def dispatch(self, *args: Any, **kwargs: Any) -> Any:
         return super().dispatch(*args, **kwargs)
 
-    def perform_create(self, serializer) -> CustomUser | None:
+    def perform_create(self, serializer) -> AbstractBaseUser | None:
         user = serializer.save(self.request)
         if user is not None:
             complete_signup(
