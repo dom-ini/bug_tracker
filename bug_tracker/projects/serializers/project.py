@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from projects.models import Project
-from projects.services.projects import is_subdomain_change_allowed
+from projects.services.project import is_subdomain_change_allowed
 from rest_framework import serializers
 
 

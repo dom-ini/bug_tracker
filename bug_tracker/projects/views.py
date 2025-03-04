@@ -7,13 +7,13 @@ from projects.filters import ProjectFilter
 from projects.models import Project
 from projects.permissions import CanEditProject
 from projects.project_resolver import MissingProjectIdentifierHeader, resolve_project_from_header
-from projects.serializers import (
+from projects.serializers.project import (
     ProjectCreateSerializer,
     ProjectDetailSerializer,
     ProjectEditSerializer,
     ProjectListSerializer,
 )
-from projects.services.projects import project_create, project_update
+from projects.services.project import project_create, project_update
 from rest_framework import mixins, serializers, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound
