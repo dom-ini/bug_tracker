@@ -9,10 +9,10 @@ class FrontendUrlType(str, Enum):
     VERIFY_EMAIL = "VERIFY_EMAIL"
 
 
-def resolve_front_url(url_type: FrontendUrlType | str, include_protocol: bool = True) -> str:
+def resolve_front_url(url_type: FrontendUrlType | str) -> str:
     if url_type not in settings.FRONTEND_URLS:
         raise ValueError(f"{url_type} is not defined in settings.FRONTEND_URLS")
-    url = f"{'https://' if include_protocol else ''}{settings.FRONTEND_URLS[url_type]}"
+    url = settings.FRONTEND_URLS[url_type]
     if url_type == FrontendUrlType.BASE:
         return url
     return f"{settings.FRONTEND_URLS[FrontendUrlType.BASE]}/{url}"

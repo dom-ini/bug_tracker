@@ -183,6 +183,7 @@ FRONTEND_URLS: dict[FrontendUrlType, str] = {
     FrontendUrlType.RESET_PASSWORD: "reset-password",
     FrontendUrlType.VERIFY_EMAIL: "verify-email",
 }
+FRONT_DOMAIN = config("FRONT_DOMAIN")
 
 AUTHENTICATION_BACKENDS = {
     "axes.backends.AxesStandaloneBackend",
