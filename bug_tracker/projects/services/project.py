@@ -6,7 +6,7 @@ from django.contrib.auth.base_user import AbstractBaseUser
 from django.db import transaction
 from django.utils.timezone import now
 from projects.models import Project, ProjectIdentifier, ProjectRole, ProjectRoleAssignment
-from projects.selectors.project import project_is_manager
+from projects.permissions import can_edit_project
 from projects.services.exceptions import NotSufficientRoleInProject, SubdomainRecentlyChanged
 
 AllowedSubdomainChangeDate = datetime
@@ -78,7 +78,7 @@ def project_update(
     subdomain: str | None = None,
     status: Project.Status | None = None,
 ) -> Project:
-    if not project_is_manager(project=project, user=editor):
+    if not can_edit_project(project=project, user=editor):
         raise NotSufficientRoleInProject()
 
     is_change_allowed, next_allowed_change = is_subdomain_change_allowed(project)

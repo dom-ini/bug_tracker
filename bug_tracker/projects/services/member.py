@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.db import transaction
 from projects.models import Project, ProjectRole, ProjectRoleAssignment
-from projects.selectors.project import project_is_manager
+from projects.permissions import can_edit_members
 from projects.services.emails import send_invitation_email_for_existing_user, send_invitation_email_for_new_user
 from projects.services.exceptions import (
     MemberAlreadyInProject,
@@ -62,7 +62,7 @@ def _update_role_assignment(*, member: ProjectRoleAssignment, new_role: ProjectR
 def member_add_to_project(
     *, project: Project, editor: AbstractBaseUser, email: str, role: ProjectRole
 ) -> ProjectRoleAssignment:
-    if not project_is_manager(project=project, user=editor):
+    if not can_edit_members(project=project, user=editor):
         raise NotSufficientRoleInProject()
 
     user = _get_user_by_email(email)
@@ -92,7 +92,7 @@ def member_add_to_project(
 def member_change_role_in_project(
     *, project: Project, editor: AbstractBaseUser, member: ProjectRoleAssignment, new_role: ProjectRole
 ) -> ProjectRoleAssignment:
-    if not project_is_manager(project=project, user=editor):
+    if not can_edit_members(project=project, user=editor):
         raise NotSufficientRoleInProject()
 
     if member.user == editor:
@@ -104,7 +104,7 @@ def member_change_role_in_project(
 
 @transaction.atomic
 def member_remove_from_project(*, project: Project, editor: AbstractBaseUser, member: ProjectRoleAssignment) -> None:
-    if not project_is_manager(project=project, user=editor):
+    if not can_edit_members(project=project, user=editor):
         raise NotSufficientRoleInProject()
 
     if member.user == editor:

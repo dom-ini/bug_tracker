@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Sequence
 
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.db.models import OuterRef, QuerySet, Subquery
@@ -39,12 +39,8 @@ def project_get_user_role(*, project: Project, user: AbstractBaseUser) -> str | 
     return assignment.role
 
 
-def project_has_user_role(*, project: Project, user: AbstractBaseUser, role: ProjectRole) -> bool:
+def project_has_user_roles(*, project: Project, user: AbstractBaseUser, roles: Sequence[ProjectRole]) -> bool:
     user_role = project_get_user_role(project=project, user=user)
     if not user_role:
         return False
-    return user_role == role
-
-
-def project_is_manager(*, project: Project, user: AbstractBaseUser) -> bool:
-    return project_has_user_role(project=project, user=user, role=ProjectRole.MANAGER)
+    return user_role in roles
