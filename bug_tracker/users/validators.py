@@ -51,8 +51,11 @@ class RepeatingCharactersPasswordValidator:
     def validate(self, password: str, *_args: Any) -> None:
         if self._has_excessive_repeating_characters(password):
             raise ValidationError(
-                _(f"This password must not contain more than {self.max_repeating} repeating characters in a row.")
+                _("This password must not contain more than %(max_repeating)d repeating characters in a row.")
+                % {"max_repeating": self.max_repeating},
             )
 
     def get_help_text(self) -> str:
-        return _(f"Your password should contain no more than {self.max_repeating} repeating characters.")
+        return _("Your password should contain no more than %(max_repeating)d repeating characters.") % {
+            "max_repeating": self.max_repeating
+        }
