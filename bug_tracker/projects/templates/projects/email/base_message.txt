@@ -1,0 +1,6 @@
+{% load i18n %}
+{% blocktrans %}Hello from {{ site_domain }}!{% endblocktrans %}
+
+{% block content %}{% endblock content %}
+
+{% blocktrans %}Thank you for using {{ site_domain }}!{% endblocktrans %}

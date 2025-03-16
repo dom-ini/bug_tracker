@@ -1,0 +1,18 @@
+{% extends "projects/email/base_message.txt" %}
+{% load i18n %}
+
+{% block content %}
+{% blocktranslate %}You have been invited to the project "{{ project_name }}".{% endblocktranslate %}
+
+{% blocktranslate %}To access the project, you need to confirm your email address by clicking on the confirmation link below:{% endblocktranslate %}
+{{ email_confirm_url }}
+
+{% blocktranslate %}Please note: This link will expire after a certain time. If it does, you can always resend the verification email from the verification page.{% endblocktranslate %}
+
+{% blocktranslate %}Once your email is confirmed, you will need to set a password to access your account. Use the link below to create your password:{% endblocktranslate %}
+{{ set_password_url }}
+
+{% blocktranslate %}Please note: This link will also expire after a certain time. If the link expires, you can use the reset password functionality on the login page to set your password.{% endblocktranslate %}
+
+{% blocktranslate %}Your username has been generated automatically as {{ username }}. You can change it after you log in to the system.{% endblocktranslate %}
+{% endblock%}
