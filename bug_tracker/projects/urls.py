@@ -1,9 +1,13 @@
-from django.urls import include, path
-from projects.views import ProjectViewSet
-from rest_framework.routers import DefaultRouter
+from django.urls import path
+from projects.views.member import MemberDetailUpdateDeleteView, MemberListCreateView
+from projects.views.project import ProjectCurrentDetailView, ProjectDetailUpdateView, ProjectListCreateView
 
-router = DefaultRouter()
-
-router.register("projects", ProjectViewSet, basename="projects")
-
-urlpatterns = [path("", include(router.urls))]
+urlpatterns = [
+    path("", ProjectListCreateView.as_view(), name="project-list-create"),
+    path("current/", ProjectCurrentDetailView.as_view(), name="project-current"),
+    path("<int:project_id>/", ProjectDetailUpdateView.as_view(), name="project-detail-update"),
+    path("<int:project_id>/members/", MemberListCreateView.as_view(), name="member-list-create"),
+    path(
+        "<int:project_id>/members/<int:member_id>/", MemberDetailUpdateDeleteView.as_view(), name="member-detail-update"
+    ),
+]

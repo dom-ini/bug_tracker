@@ -1,10 +1,8 @@
 from core.models import BaseModel
-from core.url_resolver import FrontendUrlType, resolve_front_url
+from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.contrib.auth.base_user import AbstractBaseUser
 from django.core.validators import validate_slug
 from django.db import models
-from django.db.models import QuerySet
 from django.utils.translation import gettext_lazy as _
 
 
@@ -14,17 +12,7 @@ class ProjectRole(models.TextChoices):
     REPORTER = "REP", _("reporter")
 
 
-class ProjectObjectsManager(models.Manager):
-    def all_by_user(self, user: AbstractBaseUser) -> QuerySet["Project"]:
-        return self.filter(members=user)
-
-    def get_by_subdomain(self, subdomain: str) -> "Project":
-        return self.get(identifier__subdomain=subdomain)
-
-
 class Project(BaseModel):
-    objects = ProjectObjectsManager()
-
     class Status(models.IntegerChoices):
         ACTIVE = 1, _("active")
         CLOSED = 2, _("closed")
@@ -48,19 +36,7 @@ class Project(BaseModel):
 
     @property
     def url(self) -> str:
-        return f"https://{self.subdomain}.{resolve_front_url(FrontendUrlType.BASE, include_protocol=False)}"
-
-    def get_user_role(self, user: AbstractBaseUser) -> str | None:
-        assignment = ProjectRoleAssignment.objects.filter(project=self, user=user).first()
-        if not assignment:
-            return None
-        return assignment.role
-
-    def has_role(self, user: AbstractBaseUser, role: str) -> bool:
-        user_role = self.get_user_role(user)
-        if not user_role:
-            return False
-        return user_role == role
+        return f"https://{self.subdomain}.{settings.FRONT_DOMAIN}"
 
     def __str__(self) -> str:
         return self.name
@@ -87,6 +63,7 @@ class ProjectRoleAssignment(BaseModel):
         unique_together = ("project", "user")
         verbose_name = _("Project role assignment")
         verbose_name_plural = _("Project role assignments")
+        ordering = ["user_id"]
 
     def __str__(self) -> str:
         return f"{self.project} - {self.user} - {self.role}"
