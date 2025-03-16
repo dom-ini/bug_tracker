@@ -14,7 +14,7 @@ from django.contrib.auth.base_user import AbstractBaseUser
 from django.http import HttpRequest
 from rest_framework import serializers
 from users.forms import CustomSetPasswordForm
-from users.url_generators import generate_reset_password_url
+from users.url_generators import generate_allauth_reset_password_url
 
 
 class HasCleanedDataT(Protocol):
@@ -95,7 +95,7 @@ class CustomLoginSerializer(LoginSerializer):
 
 class CustomPasswordResetSerializer(PasswordResetSerializer):
     def get_email_options(self) -> dict[str, Any]:
-        return {"url_generator": generate_reset_password_url}
+        return {"url_generator": generate_allauth_reset_password_url}
 
 
 class CustomPasswordResetConfirmSerializer(PasswordResetConfirmSerializer):
