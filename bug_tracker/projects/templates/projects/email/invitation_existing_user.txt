@@ -1,8 +1,8 @@
-{% extends "projects/email/base_message.txt" %}
+{% extends "core/email/base_message.txt" %}
 {% load i18n %}
 
 {% block content %}
 {% blocktranslate %}You have been invited to the project "{{ project_name }}".{% endblocktranslate %}
 
-{% blocktranslate %}To access the project, navigate to the project page in My Projects section.{% endblocktranslate %}
+{% blocktranslate %}You can access this project with this URL: {{ project_url }}.{% endblocktranslate %}
 {% endblock%}

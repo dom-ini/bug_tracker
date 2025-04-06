@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     "core",
     "users",
     "projects",
+    "issues",
 ]
 
 MIDDLEWARE = [
@@ -182,6 +183,8 @@ FRONTEND_URLS: dict[FrontendUrlType, str] = {
     FrontendUrlType.BASE: config("FRONT_HOST"),
     FrontendUrlType.RESET_PASSWORD: "reset-password",
     FrontendUrlType.VERIFY_EMAIL: "verify-email",
+    FrontendUrlType.PROJECTS: "projects",
+    FrontendUrlType.ISSUES: "issues",
 }
 FRONT_DOMAIN = config("FRONT_DOMAIN")
 
@@ -280,3 +283,16 @@ LOGGING = {
 
 SUBDOMAIN_HEADER_NAME = "X-Project-Identifier"
 SUBDOMAIN_CHANGE_INTERVAL_DAYS = 14
+
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
+ATTACHMENTS_BASE_PATH = "attachments"
+ATTACHMENTS_ALLOWED_FILE_TYPES = {
+    "pdf": "application/pdf",
+    "jpg": "image/jpeg",
+    "png": "image/png",
+    "txt": "text/plain",
+}

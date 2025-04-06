@@ -1,4 +1,4 @@
-{% extends "projects/email/base_message.txt" %}
+{% extends "core/email/base_message.txt" %}
 {% load i18n %}
 
 {% block content %}
@@ -15,4 +15,6 @@
 {% blocktranslate %}Please note: This link will also expire after a certain time. If the link expires, you can use the reset password functionality on the login page to set your password.{% endblocktranslate %}
 
 {% blocktranslate %}Your username has been generated automatically as {{ username }}. You can change it after you log in to the system.{% endblocktranslate %}
+
+{% blocktranslate %}After that, you can access the project with this URL: {{ project_url }}.{% endblocktranslate %}
 {% endblock%}

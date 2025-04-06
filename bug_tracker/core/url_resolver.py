@@ -7,6 +7,8 @@ class FrontendUrlType(str, Enum):
     BASE = "BASE"
     RESET_PASSWORD = "RESET_PASSWORD"
     VERIFY_EMAIL = "VERIFY_EMAIL"
+    PROJECTS = "PROJECTS"
+    ISSUES = "ISSUES"
 
 
 def resolve_front_url(url_type: FrontendUrlType | str) -> str:

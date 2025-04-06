@@ -22,6 +22,7 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 v1_urls = [
     path("projects/", include("projects.urls")),
+    path("issues/", include("issues.urls")),
     path("auth/", include("users.urls")),
     path("schema/", SpectacularAPIView.as_view(), name="schema"),
     path(

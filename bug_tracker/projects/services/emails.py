@@ -1,3 +1,4 @@
+from core.url_resolver import FrontendUrlType, resolve_front_url
 from django.conf import settings
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
@@ -6,10 +7,18 @@ from users.url_generators import generate_email_confirmation_url, generate_reset
 
 
 def send_invitation_email_for_new_user(
-    *, email: str, username: str, user_id: int, password_token: str, email_confirm_token: str, project_name: str
+    *,
+    email: str,
+    username: str,
+    user_id: int,
+    password_token: str,
+    email_confirm_token: str,
+    project_name: str,
+    project_id: int,
 ) -> None:
     set_password_url = generate_reset_password_url(user_id=user_id, key=password_token)
     email_confirm_url = generate_email_confirmation_url(email_confirm_token)
+    project_url = f"{resolve_front_url(FrontendUrlType.PROJECTS)}/{project_id}"
 
     context = {
         "project_name": project_name,
@@ -17,6 +26,7 @@ def send_invitation_email_for_new_user(
         "email_confirm_url": email_confirm_url,
         "username": username,
         "site_domain": settings.FRONT_DOMAIN,
+        "project_url": project_url,
     }
     message = render_to_string("projects/email/invitation_new_user.txt", context=context)
 
@@ -28,10 +38,12 @@ def send_invitation_email_for_new_user(
     )
 
 
-def send_invitation_email_for_existing_user(*, email: str, project_name: str) -> None:
+def send_invitation_email_for_existing_user(*, email: str, project_name: str, project_id: int) -> None:
+    project_url = f"{resolve_front_url(FrontendUrlType.PROJECTS)}/{project_id}"
     context = {
         "project_name": project_name,
         "site_domain": settings.FRONT_DOMAIN,
+        "project_url": project_url,
     }
     message = render_to_string("projects/email/invitation_existing_user.txt", context=context)
 
