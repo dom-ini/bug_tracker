@@ -80,9 +80,10 @@ def member_add_to_project(
             password_token=password_token,
             email_confirm_token=email_confirmation.key,
             project_name=project.name,
+            project_id=project.id,
         )
     else:
-        send_invitation_email_for_existing_user(email=email, project_name=project.name)
+        send_invitation_email_for_existing_user(email=email, project_name=project.name, project_id=project.id)
 
     role_assignment = _create_role_assignment(user=user, project=project, role=role)
     return role_assignment

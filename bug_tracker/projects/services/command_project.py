@@ -37,11 +37,11 @@ def _create_role_assignment(*, project: Project, user: AbstractBaseUser, role: s
 def _update_project_data(
     *, project: Project, name: str | None = None, description: str | None = None, status: Project.Status | None = None
 ) -> Project:
-    if name:
+    if name is not None:
         project.name = name
-    if description:
+    if description is not None:
         project.description = nh3.clean(description)
-    if status:
+    if status is not None:
         project.status = status
     project.validate_and_save()
     return project
@@ -82,11 +82,11 @@ def project_update(
         raise NotSufficientRoleInProject()
 
     is_change_allowed, next_allowed_change = is_subdomain_change_allowed(project)
-    if subdomain and not is_change_allowed:
+    if subdomain is not None and not is_change_allowed:
         raise SubdomainRecentlyChanged.construct(next_allowed_change)
 
-    if name or description or status:
+    if name is not None or description is not None or status is not None:
         _update_project_data(project=project, name=name, description=description, status=status)
-    if subdomain:
+    if subdomain is not None:
         _update_subdomain(project=project, subdomain=subdomain)
     return project

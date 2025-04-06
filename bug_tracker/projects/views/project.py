@@ -9,7 +9,6 @@ from drf_spectacular.utils import OpenApiParameter, extend_schema
 from projects.filters import ProjectOrdering
 from projects.models import Project, ProjectRole
 from projects.project_resolver import MissingProjectIdentifierHeader, resolve_project_from_header
-from projects.selectors.project import project_get, project_list
 from projects.serializers.project import (
     ProjectCreateSerializer,
     ProjectDetailSerializer,
@@ -17,8 +16,9 @@ from projects.serializers.project import (
     ProjectListSerializer,
     ProjectUpdateSerializer,
 )
+from projects.services.command_project import project_create, project_update
 from projects.services.exceptions import NotSufficientRoleInProject, SubdomainRecentlyChanged
-from projects.services.project import project_create, project_update
+from projects.services.query_project import project_get, project_list
 from rest_framework import serializers, status, views
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.request import Request

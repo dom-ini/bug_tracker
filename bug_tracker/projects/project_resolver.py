@@ -2,7 +2,7 @@ from django.conf import settings
 from django.http import HttpRequest
 from django.utils.translation import gettext_lazy as _
 from projects.models import Project
-from projects.selectors.project import project_get_by_subdomain
+from projects.services.query_project import project_get_by_subdomain
 
 
 class MissingProjectIdentifierHeader(Exception):

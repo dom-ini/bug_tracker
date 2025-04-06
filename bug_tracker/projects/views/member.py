@@ -6,15 +6,19 @@ from django.utils.translation import gettext_lazy as _
 from drf_spectacular.utils import extend_schema
 from projects.filters import MemberOrdering
 from projects.models import ProjectRole
-from projects.selectors.member import member_get, member_list
-from projects.selectors.project import project_get
 from projects.serializers.member import MemberCreateSerializer, MemberDetailSerializer, MemberUpdateSerializer
+from projects.services.command_member import (
+    member_add_to_project,
+    member_change_role_in_project,
+    member_remove_from_project,
+)
 from projects.services.exceptions import (
     MemberAlreadyInProject,
     NotSufficientRoleInProject,
     UserCannotModifyOwnMembership,
 )
-from projects.services.member import member_add_to_project, member_change_role_in_project, member_remove_from_project
+from projects.services.query_member import member_get, member_list
+from projects.services.query_project import project_get
 from rest_framework import serializers, status, views
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.request import Request

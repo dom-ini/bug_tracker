@@ -1,6 +1,6 @@
 from django.contrib.auth.base_user import AbstractBaseUser
 from projects.models import Project, ProjectRole
-from projects.selectors.project import project_has_user_roles
+from projects.services.query_project import project_has_user_roles
 
 
 def can_edit_project(*, project: Project, user: AbstractBaseUser) -> bool:
