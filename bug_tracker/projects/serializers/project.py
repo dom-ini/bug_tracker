@@ -25,12 +25,12 @@ class ProjectListSerializer(serializers.Serializer):
 
 class ProjectCreateSerializer(serializers.Serializer):
     name = serializers.CharField()
-    description = serializers.CharField()
+    description = serializers.CharField(allow_blank=True)
     subdomain = serializers.CharField()
 
 
 class ProjectUpdateSerializer(serializers.Serializer):
     name = serializers.CharField()
-    description = serializers.CharField()
+    description = serializers.CharField(allow_blank=True)
     subdomain = serializers.CharField()
     status = serializers.ChoiceField(choices=Project.Status.choices)
