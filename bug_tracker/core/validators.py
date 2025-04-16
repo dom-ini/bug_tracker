@@ -1,6 +1,5 @@
-from pathlib import Path
-
 import magic
+from core.utils import bytes_to_mib, get_file_extension
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.files import File
@@ -14,11 +13,19 @@ def validate_file_type(file: File, extension_validator=default_extension_validat
     extension_validator(file)
 
     mime_type = magic.Magic(mime=True).from_buffer(file.read(2048))
-    ext = Path(file.name).suffix.lstrip(".").lower()
+    ext = get_file_extension(file.name)
     expected_mime_type = settings.ATTACHMENTS_ALLOWED_FILE_TYPES.get(ext)
 
     if expected_mime_type and mime_type != expected_mime_type:
         raise ValidationError(
             _('Invalid file type. Expected "%(expected)s", got "%(actual)s"')
             % {"expected": expected_mime_type, "actual": mime_type}
+        )
+
+
+def validate_file_size(file: File) -> None:
+    max_size = settings.ATTACHMENTS_MAX_SIZE
+    if file.size > max_size:
+        raise ValidationError(
+            _("File should not exceed %(max_size)s MiB.") % {"max_size": f"{bytes_to_mib(max_size):.6f}"}
         )

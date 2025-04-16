@@ -13,6 +13,7 @@ REST_AUTH.update(
 
 CORE_EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
+MEDIA_URL = "http://media.bugtracker.local/"
 STORAGES.update(
     {
         "default": {

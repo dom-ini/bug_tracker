@@ -1,16 +1,16 @@
 from core.pagination import LimitOffsetPagination, get_paginated_response
 from core.services import query_or_404
 from drf_spectacular.utils import extend_schema
-from issues.services.command_comment import comment_create, comment_remove, comment_update
-from issues.services.exceptions import CommentActionNotPermitted
-from issues.services.query_comment import comment_get, comment_list
-from issues.services.query_issue import issue_get
-from issues.templates.serializers.comment import (
+from issues.serializers.comment import (
     CommentCreateSerializer,
     CommentDetailSerializer,
     CommentListSerializer,
     CommentUpdateSerializer,
 )
+from issues.services.command_comment import comment_create, comment_remove, comment_update
+from issues.services.exceptions import CommentActionNotPermitted
+from issues.services.query_comment import comment_get, comment_list
+from issues.services.query_issue import issue_get
 from rest_framework import serializers, status, views
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.request import Request

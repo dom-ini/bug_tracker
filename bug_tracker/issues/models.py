@@ -1,5 +1,5 @@
 from core.models import BaseModel
-from core.validators import validate_file_type
+from core.validators import validate_file_size, validate_file_type
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
@@ -70,11 +70,18 @@ class IssueAttachment(BaseModel):
     comment = models.ForeignKey(
         IssueComment, on_delete=models.CASCADE, related_name="attachments", null=True, blank=True
     )
-    file = models.FileField(upload_to=get_attachment_upload_path, validators=[validate_file_type])
+    uploaded_by = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name="issue_attachments")
+
+    file = models.FileField(upload_to=get_attachment_upload_path, validators=[validate_file_type, validate_file_size])
+    extension = models.CharField(max_length=255)
 
     class Meta:
         verbose_name = _("Issue attachment")
         verbose_name_plural = _("Issue attachments")
+
+    @property
+    def url(self) -> str:
+        return self.file.url
 
     def __str__(self) -> str:
         return self.file.name

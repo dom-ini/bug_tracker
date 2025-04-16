@@ -1,5 +1,5 @@
 from issues.models import Issue
-from issues.templates.serializers.shared import IssueParticipantSerializer
+from issues.serializers.shared import IssueParticipantSerializer
 from rest_framework import serializers
 
 

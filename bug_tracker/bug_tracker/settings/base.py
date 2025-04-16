@@ -144,6 +144,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = "static/"
+MEDIA_ROOT = BASE_DIR.parent / "media"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -296,3 +297,4 @@ ATTACHMENTS_ALLOWED_FILE_TYPES = {
     "png": "image/png",
     "txt": "text/plain",
 }
+ATTACHMENTS_MAX_SIZE = config("ATTACHMENTS_MAX_SIZE", default=1024 * 1024 * 10)

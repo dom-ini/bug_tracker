@@ -18,11 +18,11 @@ REST_AUTH.update(
 
 CORE_EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
+MEDIA_URL = "https://media.bugtracker.com/"
 STORAGES.update(
     {
         "default": {
-            "BACKEND": "storages.backends.gcloud.GoogleCloudStorage",
-            "OPTIONS": {},
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
         },
     }
 )

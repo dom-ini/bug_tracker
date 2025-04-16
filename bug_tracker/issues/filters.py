@@ -1,7 +1,7 @@
 from core.filters import BaseOrdering
 from django.db.models import QuerySet
 from django_filters import rest_framework as filters
-from issues.models import Issue, IssueComment
+from issues.models import Issue, IssueAttachment, IssueComment
 
 
 class IssueOrdering(BaseOrdering):
@@ -9,6 +9,10 @@ class IssueOrdering(BaseOrdering):
 
 
 class IssueCommentOrdering(BaseOrdering):
+    base_fields = ["created_at"]
+
+
+class IssueAttachmentOrdering(BaseOrdering):
     base_fields = ["created_at"]
 
 
@@ -40,4 +44,14 @@ class IssueCommentFilter(filters.FilterSet):
         model = IssueComment
         fields = {
             "author": ["exact"],
+        }
+
+
+class IssueAttachmentFilter(filters.FilterSet):
+    order_by = filters.OrderingFilter(fields=IssueAttachmentOrdering.base_fields)
+
+    class Meta:
+        model = IssueAttachment
+        fields = {
+            "extension": ["exact"],
         }

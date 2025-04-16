@@ -6,6 +6,13 @@ from django.utils.translation import gettext_lazy as _
 from drf_spectacular.utils import extend_schema
 from issues.filters import IssueOrdering
 from issues.models import Issue
+from issues.serializers.issue import (
+    IssueAssignSerializer,
+    IssueCreateSerializer,
+    IssueDetailSerializer,
+    IssueListSerializer,
+    IssueUpdateSerializer,
+)
 from issues.services.command_issue import issue_assign, issue_create, issue_remove, issue_update
 from issues.services.exceptions import (
     AssigneeDoesNotExistWithinProject,
@@ -13,13 +20,6 @@ from issues.services.exceptions import (
     IssueAlreadyAssignedToGivenAssignee,
 )
 from issues.services.query_issue import issue_get, issue_list
-from issues.templates.serializers.issue import (
-    IssueAssignSerializer,
-    IssueCreateSerializer,
-    IssueDetailSerializer,
-    IssueListSerializer,
-    IssueUpdateSerializer,
-)
 from projects.services.query_project import project_get
 from rest_framework import serializers, status, views
 from rest_framework.exceptions import PermissionDenied
