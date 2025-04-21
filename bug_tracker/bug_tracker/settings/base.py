@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.google",
     "django_filters",
     "axes",
+    "auditlog",
     "core",
     "users",
     "projects",
@@ -67,6 +68,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
+    "auditlog.middleware.AuditlogMiddleware",
     "core.middleware.LogIpMiddleware",
     "axes.middleware.AxesMiddleware",
 ]

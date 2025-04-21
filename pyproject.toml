@@ -25,6 +25,7 @@ celery = {extras = ["redis"], version = "^5.4.0"}
 dj-database-url = "^2.3.0"
 dj-rest-auth = {extras = ["with-social"], version = "^7.0.1"}
 django = {extras = ["argon2"], version = "^5.1.6"}
+django-auditlog = "^3.0.0"
 django-axes = {extras = ["ipware"], version = "^7.0.1"}
 django-filter = "^24.3"
 django-storages = "^1.14.6"

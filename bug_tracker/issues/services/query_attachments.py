@@ -6,10 +6,17 @@ from issues.filters import IssueAttachmentFilter
 from issues.models import IssueAttachment
 
 
-def attachment_list_for_issue(
+def attachment_list_all(
     *, issue_id: int, user: AbstractBaseUser, filters: dict[str, Any] | None = None
 ) -> QuerySet[IssueAttachment]:
     attachments = IssueAttachment.objects.filter(issue_id=issue_id, issue__project__members=user)
+    return IssueAttachmentFilter(filters, queryset=attachments).qs
+
+
+def attachment_list_for_issue(
+    *, issue_id: int, user: AbstractBaseUser, filters: dict[str, Any] | None = None
+) -> QuerySet[IssueAttachment]:
+    attachments = IssueAttachment.objects.filter(issue_id=issue_id, comment__isnull=True, issue__project__members=user)
     return IssueAttachmentFilter(filters, queryset=attachments).qs
 
 

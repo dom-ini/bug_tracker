@@ -1,3 +1,4 @@
+from auditlog.registry import auditlog
 from core.models import BaseModel
 from core.validators import validate_file_size, validate_file_type
 from django.conf import settings
@@ -85,3 +86,20 @@ class IssueAttachment(BaseModel):
 
     def __str__(self) -> str:
         return self.file.name
+
+
+class HistoryEntrySubject:
+    ISSUE = "issue"
+    COMMENT = "comment"
+    ATTACHMENT = "attachment"
+
+    choices = (
+        (ISSUE, Issue._meta.verbose_name),
+        (COMMENT, IssueComment._meta.verbose_name),
+        (ATTACHMENT, IssueAttachment._meta.verbose_name),
+    )
+
+
+auditlog.register(Issue, include_fields=["title", "description", "status", "priority", "type", "assigned_to"])
+auditlog.register(IssueComment, include_fields=["text"])
+auditlog.register(IssueAttachment, include_fields=["file", "extension"])

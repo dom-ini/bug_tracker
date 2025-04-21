@@ -5,11 +5,13 @@ from issues.views.attachments import (
     IssueAttachmentListCreateView,
 )
 from issues.views.comment import CommentDetailUpdateDeleteView, CommentListCreateView
+from issues.views.history import HistoryListView
 from issues.views.issue import IssueAssignView, IssueDetailUpdateDeleteView
 
 urlpatterns = [
     path("<int:issue_id>/", IssueDetailUpdateDeleteView.as_view(), name="issue-detail-update-delete"),
     path("<int:issue_id>/assign/", IssueAssignView.as_view(), name="issue-assign"),
+    path("<int:issue_id>/history/", HistoryListView.as_view(), name="issue-history"),
     path("<int:issue_id>/attachments/", IssueAttachmentListCreateView.as_view(), name="issue-attachment-list-create"),
     path("<int:issue_id>/comments/", CommentListCreateView.as_view(), name="comment-list-create"),
     path(
