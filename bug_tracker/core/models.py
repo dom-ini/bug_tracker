@@ -11,3 +11,7 @@ class BaseModel(models.Model):
     def validate_and_save(self) -> None:
         self.full_clean()
         self.save()
+
+
+class DummyModel(BaseModel):
+    name = models.CharField(max_length=1)
