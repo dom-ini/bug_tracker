@@ -2,7 +2,12 @@ import time
 
 from django.core.management.base import BaseCommand
 from django.db import connections
+from django.db.backends.base.base import BaseDatabaseWrapper
 from django.db.utils import OperationalError
+
+
+def get_default_db_connection() -> BaseDatabaseWrapper:
+    return connections["default"]
 
 
 class Command(BaseCommand):
@@ -10,10 +15,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs) -> None:
         self.stdout.write("Waiting for database...")
-        db_conn = None
+        db_conn: BaseDatabaseWrapper | None = None
         while not db_conn:
             try:
-                db_conn = connections["default"]
+                db_conn = get_default_db_connection()
                 self.stdout.write(self.style.SUCCESS("Database is ready!"))
             except OperationalError:
                 self.stdout.write("Database unavailable, waiting 5 seconds...")
