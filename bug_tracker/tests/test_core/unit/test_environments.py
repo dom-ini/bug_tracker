@@ -1,9 +1,10 @@
+import os
 from typing import Callable
 from unittest.mock import MagicMock
 
 import pytest
 from _pytest.monkeypatch import MonkeyPatch
-from core.environments import Environment, get_environment, get_settings_module
+from core.environments import Environment, get_environment, get_settings_module, set_django_settings_module
 from pytest_mock import MockerFixture
 
 pytestmark = pytest.mark.unit
@@ -43,3 +44,13 @@ def test_get_settings_module(set_env: SetEnvFunc, env_value: str) -> None:
 
     settings_module = f"bug_tracker.settings.{env_value}"
     assert get_settings_module() == settings_module
+
+
+def test_set_django_settings_module(mocker: MockerFixture) -> None:
+    settings_module = "some.settings.module"
+    mocker.patch("core.environments.get_settings_module", return_value=settings_module)
+    os.environ.pop("DJANGO_SETTINGS_MODULE", None)
+
+    set_django_settings_module()
+
+    assert os.environ.get("DJANGO_SETTINGS_MODULE") == settings_module

@@ -33,9 +33,9 @@ def test_get_client_ip(mock_request: HttpRequest, meta_data: dict[str, str], exp
 
 @pytest.mark.parametrize("ip,user", [("192.168.1.30", MagicMock(username="user")), ("10.0.0.2", None)])
 def test_log_ip_middleware_logs_ip(
-    mock_logger: MagicMock, mock_request: HttpRequest, ip: str, user: MagicMock | None
+    mocker: MockerFixture, mock_logger: MagicMock, mock_request: HttpRequest, ip: str, user: MagicMock | None
 ) -> None:
-    get_response = MagicMock()
+    get_response = mocker.MagicMock()
     mock_request.user = user
     mock_request.META["REMOTE_ADDR"] = ip
     middleware = LogIpMiddleware(get_response)
