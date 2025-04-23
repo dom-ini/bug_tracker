@@ -16,7 +16,10 @@ services:
     networks:
       - app_network
   web:
-    build: .
+    build:
+      context: .
+      args:
+        INSTALL_DEV: true
     working_dir: /app/bug_tracker
     command: >
       bash -c "python manage.py wait_for_db &&
