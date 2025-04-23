@@ -5,6 +5,9 @@ from rest_framework import exceptions, serializers
 
 class CommaSeparatedMultipleChoiceField(serializers.MultipleChoiceField):
     def to_internal_value(self, data: Sequence) -> str:
+        for item in data:
+            if item not in self.choice_strings_to_values:
+                self.fail("invalid_choice", input=item)
         return ",".join(data)
 
 
