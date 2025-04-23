@@ -34,21 +34,44 @@ def get_test_files_globs(config: ConfigT) -> Sequence[str]:
     return config.get("tool", {}).get("pytest", {}).get("ini_options", {}).get("python_files", [])
 
 
-def get_pytestmark_nodes_from_file(filepath: Path) -> Sequence[str]:
+def extract_pytest_mark_name(value: ast.expr) -> str | None:
+    """Extracts a single pytest.mark.<marker> from a given AST expression."""
+    if isinstance(value, ast.Attribute) and value.attr:
+        return value.attr
+    elif isinstance(value, ast.Call) and isinstance(value.func, ast.Attribute):
+        return value.func.attr
+    return None
+
+
+def extract_pytest_marks(expr: ast.expr) -> Sequence[str]:
+    """Extracts all pytest marker names from a value assigned to 'pytestmark'."""
+    marks = []
+    if isinstance(expr, ast.List):
+        for item in expr.elts:
+            mark = extract_pytest_mark_name(item)
+            if mark:
+                marks.append(mark)
+    else:
+        mark = extract_pytest_mark_name(expr)
+        if mark:
+            marks.append(mark)
+    return marks
+
+
+def get_pytest_marks_from_file(filepath: Path) -> Sequence[str]:
     """Extracts all `pytest.mark.<marker>` values from a test file."""
     with open(filepath, "r", encoding="utf-8") as f:
         tree = ast.parse(f.read(), filename=filepath)
 
-    pytest_marks = []
+    marks = []
     for node in tree.body:
-        if isinstance(node, ast.Assign):
-            for target in node.targets:
-                if isinstance(target, ast.Name) and target.id == "pytestmark":
-                    if isinstance(node.value, ast.Attribute) and node.value.attr:
-                        pytest_marks.append(node.value.attr)
-                    elif isinstance(node.value, ast.Call) and isinstance(node.value.func, ast.Attribute):
-                        pytest_marks.append(node.value.func.attr)
-    return pytest_marks
+        if not isinstance(node, ast.Assign):
+            continue
+        for target in node.targets:
+            if isinstance(target, ast.Name) and target.id == "pytestmark":
+                marks.extend(extract_pytest_marks(node.value))
+
+    return marks
 
 
 def get_expected_test_marker(filepath: Path, test_markers: Sequence[str]) -> str | None:
@@ -59,8 +82,8 @@ def get_expected_test_marker(filepath: Path, test_markers: Sequence[str]) -> str
     return None
 
 
-def check_pytestmarks(root_dir: str, test_markers: Sequence[str], file_globs: Sequence[str]) -> bool:
-    """Ensures that test files contain the correct pytestmark for their directory."""
+def check_pytest_marks(root_dir: str, test_markers: Sequence[str], file_globs: Sequence[str]) -> bool:
+    """Ensures that test files contain the correct pytest mark for their directory."""
     success = True
 
     files: Sequence[Path] = itertools.chain.from_iterable(Path(root_dir).rglob(pattern) for pattern in file_globs)
@@ -70,7 +93,7 @@ def check_pytestmarks(root_dir: str, test_markers: Sequence[str], file_globs: Se
         if not expected_marker:
             continue
 
-        pytest_marks = get_pytestmark_nodes_from_file(file)
+        pytest_marks = get_pytest_marks_from_file(file)
 
         if expected_marker not in pytest_marks:
             print(f"❌ ERROR: {file} is missing pytest.mark.{expected_marker}")
@@ -92,7 +115,7 @@ if __name__ == "__main__":
     test_files_globs = get_test_files_globs(project_config)
     tests_root_dir = sys.argv[1]
 
-    if not check_pytestmarks(tests_root_dir, markers, test_files_globs):
+    if not check_pytest_marks(tests_root_dir, markers, test_files_globs):
         sys.exit(1)
 
     print("✅ All test files have correct pytest marks!")
