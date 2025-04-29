@@ -1,6 +1,6 @@
 import pytest
 from core.pagination import LimitOffsetPagination, get_paginated_response
-from rest_framework import serializers
+from rest_framework import serializers, status
 from rest_framework.request import Request
 from rest_framework.test import APIRequestFactory
 from rest_framework.views import APIView
@@ -41,7 +41,7 @@ def test_get_paginated_response_with_pagination(dummy_data: list[DummyObject]) -
         view=view,
     )
 
-    assert response.status_code == 200
+    assert response.status_code == status.HTTP_200_OK
     assert "results" in response.data
     assert len(response.data["results"]) == limit
     assert response.data["count"] == len(dummy_data)
@@ -66,5 +66,5 @@ def test_get_paginated_response_without_pagination(dummy_data: list[DummyObject]
         view=view,
     )
 
-    assert response.status_code == 200
+    assert response.status_code == status.HTTP_200_OK
     assert len(response.data["results"]) == len(dummy_data)

@@ -4,6 +4,7 @@ import pytest
 from core.exceptions import ApplicationException, custom_exception_handler
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.http import Http404
+from rest_framework import status
 from rest_framework.exceptions import NotAcceptable
 
 pytestmark = pytest.mark.unit
@@ -38,7 +39,12 @@ def test_application_exception_subclass_overwrites_default_message_if_passed() -
 
 @pytest.mark.parametrize(
     "exc,code",
-    ((Http404(), 404), (PermissionDenied(), 403), (ValidationError(["Error 1"]), 400), (NotAcceptable(), 406)),
+    (
+        (Http404(), status.HTTP_404_NOT_FOUND),
+        (PermissionDenied(), status.HTTP_403_FORBIDDEN),
+        (ValidationError(["Error 1"]), status.HTTP_400_BAD_REQUEST),
+        (NotAcceptable(), status.HTTP_406_NOT_ACCEPTABLE),
+    ),
 )
 def test_custom_exception_handler_handles_error(exc: Exception, code: int) -> None:
     response = custom_exception_handler(exc, {})

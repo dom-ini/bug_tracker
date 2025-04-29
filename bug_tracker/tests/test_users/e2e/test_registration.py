@@ -5,6 +5,7 @@ from django.core import mail
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
+from users.models import CustomUser
 
 pytestmark = pytest.mark.e2e
 
@@ -25,7 +26,8 @@ def test_user_registration_and_email_verification(client: APIClient) -> None:
 
     response = client.post(register_url, user_data)
 
-    assert response.status_code == 201
+    assert response.status_code == status.HTTP_201_CREATED
+    assert CustomUser.objects.filter(email=email).exists()
     assert len(mail.outbox) == 1
     verification_email = mail.outbox[0]
     assert email in verification_email.to
@@ -36,7 +38,7 @@ def test_user_registration_and_email_verification(client: APIClient) -> None:
 
     verify_url = reverse("rest_verify_email")
     confirm_response = client.post(verify_url, data={"key": token})
-    assert confirm_response.status_code == 200
+    assert confirm_response.status_code == status.HTTP_200_OK
 
     login_url = reverse("rest_login")
     response = client.post(
