@@ -53,7 +53,7 @@ def _update_subdomain(*, project: Project, subdomain: str) -> Project:
     return project
 
 
-def is_subdomain_change_allowed(project: Project) -> tuple[bool, AllowedSubdomainChangeDate]:
+def _is_subdomain_change_allowed(project: Project) -> tuple[bool, AllowedSubdomainChangeDate]:
     cooldown_days = settings.SUBDOMAIN_CHANGE_INTERVAL_DAYS
     last_updated = project.identifier.updated_at
     next_allowed_change = last_updated + timedelta(days=cooldown_days)
@@ -81,7 +81,7 @@ def project_update(
     if not can_edit_project(project=project, user=editor):
         raise NotSufficientRoleInProject()
 
-    is_change_allowed, next_allowed_change = is_subdomain_change_allowed(project)
+    is_change_allowed, next_allowed_change = _is_subdomain_change_allowed(project)
     if subdomain is not None and not is_change_allowed:
         raise SubdomainRecentlyChanged.construct(next_allowed_change)
 
