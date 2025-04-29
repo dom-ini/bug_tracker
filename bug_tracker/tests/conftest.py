@@ -1,7 +1,8 @@
 import pytest
-from allauth.account.models import EmailAddress
 from faker.proxy import Faker
-from rest_framework.test import APIClient
+from projects.models import Project
+from rest_framework.test import APIClient, APIRequestFactory
+from tests.factories import fake_project, fake_user
 from users.models import CustomUser
 
 
@@ -19,22 +20,29 @@ def client() -> APIClient:
 
 
 @pytest.fixture
+def request_factory() -> APIRequestFactory:
+    factory = APIRequestFactory()
+    factory.default_format = "json"
+    return factory
+
+
+@pytest.fixture
 def password() -> str:
     return "StrongP@ssword1234!"
 
 
 @pytest.fixture
-def user(password: str) -> CustomUser:
-    return CustomUser.objects.create_user(username="user", email="user@example.com", password=password)
-
-
-@pytest.fixture
-def user_with_unverified_email(user: CustomUser) -> CustomUser:
-    EmailAddress.objects.create(user=user, email=user.email, verified=False, primary=True)
+def user_with_unverified_email(password: str) -> CustomUser:
+    user = fake_user(password=password, is_verified=False)
     return user
 
 
 @pytest.fixture
-def user_with_verified_email(user: CustomUser) -> CustomUser:
-    EmailAddress.objects.create(user=user, email=user.email, verified=True, primary=True)
+def user_with_verified_email(password: str) -> CustomUser:
+    user = fake_user(password=password, is_verified=True)
     return user
+
+
+@pytest.fixture
+def project(user_with_verified_email: CustomUser) -> Project:
+    return fake_project(user=user_with_verified_email)

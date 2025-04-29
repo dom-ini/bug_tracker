@@ -6,12 +6,11 @@ pytestmark = pytest.mark.integration
 
 
 @pytest.mark.django_db
-def test_create_superuser_with_existing_email_should_fail(user: CustomUser) -> None:
-    email = "user@example.com"
-    EmailAddress.objects.create(user=user, email=email, verified=True, primary=True)
-
+def test_create_superuser_with_existing_email_should_fail(user_with_verified_email: CustomUser) -> None:
     with pytest.raises(ValueError):
-        CustomUser.objects.create_superuser(username="username", email=user.email, password="P@ssword1234")
+        CustomUser.objects.create_superuser(
+            username="username", email=user_with_verified_email.email, password="P@ssword1234"
+        )
 
 
 @pytest.mark.django_db
