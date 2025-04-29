@@ -11,12 +11,14 @@ def _get_role_subquery(user: AbstractBaseUser) -> QuerySet[ProjectRoleAssignment
 
 
 def project_get(*, project_id: int, user: AbstractBaseUser) -> Project | None:
+    """Returns Project with `role` field"""
     role_subquery = _get_role_subquery(user=user)
     project = Project.objects.filter(id=project_id, members=user).annotate(role=Subquery(role_subquery)).first()
     return project
 
 
 def project_get_by_subdomain(*, subdomain: str, user: AbstractBaseUser) -> Project | None:
+    """Returns Project with `role` field"""
     role_subquery = _get_role_subquery(user=user)
     project = (
         Project.objects.filter(identifier__subdomain=subdomain, members=user)
@@ -27,6 +29,7 @@ def project_get_by_subdomain(*, subdomain: str, user: AbstractBaseUser) -> Proje
 
 
 def project_list(*, user: AbstractBaseUser, filters: dict[str, Any] | None = None) -> QuerySet[Project]:
+    """Returns Projects list with `role` field"""
     role_subquery = _get_role_subquery(user=user)
     queryset = Project.objects.filter(members=user).annotate(role=Subquery(role_subquery))
     return ProjectFilter(filters, queryset=queryset).qs
