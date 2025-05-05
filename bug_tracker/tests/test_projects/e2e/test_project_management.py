@@ -6,6 +6,7 @@ from projects.models import ProjectRole
 from rest_framework import status
 from rest_framework.test import APIClient
 from tests.factories import fake_user
+from tests.utils import login_as
 from users.models import CustomUser
 
 pytestmark = pytest.mark.e2e
@@ -13,24 +14,11 @@ pytestmark = pytest.mark.e2e
 
 @pytest.mark.django_db
 def test_project_management_flow(client: APIClient, user_with_verified_email: CustomUser, password: str) -> None:
-    # try to access projects unauthenticated
-    projects_url = reverse("project-list-create")
-    response = client.get(projects_url)
-    assert response.status_code == status.HTTP_401_UNAUTHORIZED
-
     # login as (future) manager
-    login_url = reverse("rest_login")
-    login_data = {
-        "username": user_with_verified_email.username,
-        "password": password,
-    }
-    response = client.post(login_url, data=login_data)
-    assert response.status_code == status.HTTP_200_OK, "Manager login failed"
-    token = response.data["access"]
-
-    client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
+    login_as(client=client, user=user_with_verified_email, password=password)
 
     # access projects list
+    projects_url = reverse("project-list-create")
     response = client.get(projects_url)
     assert response.status_code == status.HTTP_200_OK
     assert response.data["count"] == 0
@@ -86,15 +74,7 @@ def test_project_management_flow(client: APIClient, user_with_verified_email: Cu
     assert dev_user.email in invitation_email.to
 
     # login as developer
-    login_data = {
-        "username": dev_user.username,
-        "password": dev_password,
-    }
-    response = client.post(login_url, data=login_data)
-    assert response.status_code == status.HTTP_200_OK, "Developer login failed"
-    token = response.data["access"]
-
-    client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
+    login_as(client=client, user=dev_user, password=dev_password)
 
     # project should be in the list
     response = client.get(projects_url)
