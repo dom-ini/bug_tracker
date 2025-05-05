@@ -157,6 +157,12 @@ MEDIA_ROOT = BASE_DIR.parent / "media"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 EMAIL_BACKEND = "core.email_backend.AsyncEmailBackend"
+DEFAULT_FROM_EMAIL = "bugtracker"
+EMAIL_HOST = config("EMAIL_HOST")
+EMAIL_HOST_USER = config("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
+EMAIL_PORT = config("EMAIL_PORT", cast=int)
+EMAIL_USE_TLS = config("EMAIL_USE_TLS", cast=bool)
 
 DEFAULT_RENDERER_CLASSES = [
     "rest_framework.renderers.JSONRenderer",
