@@ -1,0 +1,38 @@
+name: bug_tracker
+services:
+  db:
+    volumes:
+      - db-data-dev:/var/lib/postgresql/data
+    env_file:
+      - .env
+  web:
+    build:
+      args:
+        INSTALL_DEV: true
+    command: >
+      bash -c "python manage.py wait_for_db &&
+               python manage.py migrate &&
+               python manage.py runserver 0.0.0.0:8000"
+    env_file:
+      - .env
+  nginx:
+    volumes:
+      - ./docker/nginx/dev.conf:/etc/nginx/conf.d/default.conf:ro
+    ports:
+      - "80:80"
+    env_file:
+      - .env
+  redis:
+    volumes:
+      - redis-data-dev:/data
+    env_file:
+      - .env
+  celery:
+    env_file:
+      - .env
+  flower:
+    env_file:
+      - .env
+volumes:
+  db-data-dev:
+  redis-data-dev:

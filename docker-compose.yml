@@ -3,8 +3,6 @@ services:
   db:
     image: postgres:17
     restart: always
-    volumes:
-      - db-data:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=${DATABASE_NAME}
       - POSTGRES_USER=${DATABASE_USER}
@@ -19,30 +17,20 @@ services:
     build:
       context: .
       dockerfile: ./docker/django/Dockerfile
-      args:
-        INSTALL_DEV: true
     working_dir: /app/bug_tracker
-    command: >
-      bash -c "python manage.py wait_for_db &&
-               python manage.py migrate &&
-               python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/app
     expose:
       - 8000
-    env_file:
-      - .env
     depends_on:
       - db
     networks:
     - app_network
   nginx:
-    build: ./docker/nginx
+    image: nginx:1.27
     volumes:
-      - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/nginx.conf
       - ./media:/app/media
-    ports:
-      - "80:80"
+      - ./staticfiles:/app/staticfiles
     depends_on:
       - web
     networks:
@@ -52,8 +40,6 @@ services:
     restart: always
     ports:
       - "6379:6379"
-    volumes:
-      - redis-data:/data
     networks:
       - app_network
   celery:
@@ -82,9 +68,6 @@ services:
       - "5555:5555"
     networks:
       - app_network
-volumes:
-  db-data:
-  redis-data:
 networks:
   app_network:
     driver: bridge
