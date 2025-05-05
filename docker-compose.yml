@@ -18,6 +18,7 @@ services:
   web:
     build:
       context: .
+      dockerfile: ./docker/django/Dockerfile
       args:
         INSTALL_DEV: true
     working_dir: /app/bug_tracker
@@ -56,7 +57,9 @@ services:
     networks:
       - app_network
   celery:
-    build: .
+    build:
+      context: .
+      dockerfile: ./docker/django/Dockerfile
     command: celery -A bug_tracker worker --loglevel INFO
     working_dir: /app/bug_tracker
     depends_on:
@@ -67,7 +70,9 @@ services:
     networks:
       - app_network
   flower:
-    build: .
+    build:
+      context: .
+      dockerfile: ./docker/django/Dockerfile
     working_dir: /app/bug_tracker
     command: celery -A bug_tracker flower --port=5555 --loglevel INFO
     depends_on:
