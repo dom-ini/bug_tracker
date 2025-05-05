@@ -2,6 +2,7 @@ from auditlog.models import LogEntry
 from core.filters import BaseOrdering
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import QuerySet
+from django.utils.functional import classproperty
 from django_filters import rest_framework as filters
 from issues.models import HistoryEntrySubject, Issue, IssueAttachment, IssueComment
 
@@ -64,11 +65,13 @@ class IssueAttachmentFilter(filters.FilterSet):
 
 
 class HistoryEntryFilter(filters.FilterSet):
-    subject_to_ct = {
-        HistoryEntrySubject.ISSUE: ContentType.objects.get_for_model(Issue),
-        HistoryEntrySubject.COMMENT: ContentType.objects.get_for_model(IssueComment),
-        HistoryEntrySubject.ATTACHMENT: ContentType.objects.get_for_model(IssueAttachment),
-    }
+    @classproperty
+    def subject_to_ct(cls) -> dict[str, ContentType]:
+        return {
+            HistoryEntrySubject.ISSUE: ContentType.objects.get_for_model(Issue),
+            HistoryEntrySubject.COMMENT: ContentType.objects.get_for_model(IssueComment),
+            HistoryEntrySubject.ATTACHMENT: ContentType.objects.get_for_model(IssueAttachment),
+        }
 
     order_by = filters.OrderingFilter(fields=IssueHistoryOrdering.base_fields)
     content_type = filters.ChoiceFilter(choices=subject_to_ct, method="filter_subject")
