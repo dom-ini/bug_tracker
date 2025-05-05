@@ -35,6 +35,20 @@ def test_member_list_success(
 
 
 @pytest.mark.django_db
+def test_member_list_failure(
+    project: Project, user_with_verified_email: CustomUser, request_factory: APIRequestFactory
+) -> None:
+    url = reverse("member-list-create", kwargs={"project_id": project.id})
+
+    request = request_factory.get(url, data={"role": "invalid"})
+    force_authenticate(request, user=user_with_verified_email)
+    view = MemberListCreateView.as_view()
+    response = view(request, project_id=project.id)
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+@pytest.mark.django_db
 def test_member_create_success(
     project: Project, user_with_verified_email: CustomUser, request_factory: APIRequestFactory
 ) -> None:

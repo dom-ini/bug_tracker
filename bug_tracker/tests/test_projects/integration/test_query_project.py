@@ -32,6 +32,15 @@ def test_project_get_returns_none_if_not_member() -> None:
 
 
 @pytest.mark.django_db
+def test_project_get_returns_none_if_invalid_project_id() -> None:
+    user_member = fake_user()
+
+    fetched_project = query_project.project_get(project_id=999, user=user_member)
+
+    assert fetched_project is None
+
+
+@pytest.mark.django_db
 def test_project_get_by_subdomain_returns_project_with_user_role() -> None:
     user = fake_user()
     project = fake_project(user=user)

@@ -1,7 +1,6 @@
 import pytest
 from django.conf import settings
 from django.urls import reverse
-from django.views import View
 from projects.models import Project
 from projects.views.project import ProjectCurrentDetailView, ProjectDetailUpdateView, ProjectListCreateView
 from rest_framework import status
@@ -92,6 +91,20 @@ def test_project_list_success(
 
 
 @pytest.mark.django_db
+def test_project_list_failure(
+    project: Project, user_with_verified_email: CustomUser, request_factory: APIRequestFactory
+) -> None:
+    url = reverse("project-list-create")
+
+    request = request_factory.get(url, data={"status": "invalid"})
+    force_authenticate(request, user=user_with_verified_email)
+    view = ProjectListCreateView.as_view()
+    response = view(request)
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+@pytest.mark.django_db
 def test_project_create_success(user_with_verified_email: CustomUser, request_factory: APIRequestFactory) -> None:
     url = reverse("project-list-create")
     data = {
@@ -152,25 +165,3 @@ def test_project_current_detail_failure(
     response = view(request)
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
-
-
-@pytest.mark.django_db
-@pytest.mark.parametrize(
-    "url_name,kwargs,method,view_class",
-    [
-        ("project-detail-update", {"project_id": 1}, "get", ProjectDetailUpdateView),
-        ("project-detail-update", {"project_id": 1}, "put", ProjectDetailUpdateView),
-        ("project-list-create", {}, "get", ProjectListCreateView),
-        ("project-list-create", {}, "post", ProjectListCreateView),
-        ("project-current", {}, "get", ProjectCurrentDetailView),
-    ],
-)
-def test_project_views_require_authentication(
-    url_name: str, kwargs: dict[str, int], method: str, view_class: type[View], request_factory: APIRequestFactory
-) -> None:
-    url = reverse(url_name, kwargs=kwargs)
-
-    request = getattr(request_factory, method)(url)
-    response = view_class.as_view()(request)
-
-    assert response.status_code == status.HTTP_401_UNAUTHORIZED

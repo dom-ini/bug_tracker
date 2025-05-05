@@ -46,6 +46,17 @@ def test_project_create_with_invalid_data(user_1: CustomUser) -> None:
 
 
 @pytest.mark.django_db
+def test_project_create_description_should_be_cleaned(user_1: CustomUser) -> None:
+    malicious_description = "<script>alert('Malicious')</script>safe part of description<p>should not be stripped</p>"
+
+    project = command_project.project_create(
+        name="Project", description=malicious_description, subdomain="project-subdomain", user=user_1
+    )
+
+    assert project.description == "safe part of description<p>should not be stripped</p>"
+
+
+@pytest.mark.django_db
 def test_project_update_by_manager(user_1: CustomUser, project_1: Project) -> None:
     new_name = "Updated Project Name"
     new_description = "Updated project description"
@@ -67,6 +78,17 @@ def test_project_update_by_non_manager_should_fail(user_1: CustomUser, project_1
 
     with pytest.raises(NotSufficientRoleInProject):
         command_project.project_update(project=project_1, editor=non_manager, name="Invalid Update")
+
+
+@pytest.mark.django_db
+def test_project_update_description_should_be_cleaned(user_1: CustomUser, project_1: Project) -> None:
+    malicious_description = "<script>alert('Malicious')</script>safe part of description<p>should not be stripped</p>"
+
+    updated_project = command_project.project_update(
+        project=project_1, editor=user_1, description=malicious_description
+    )
+
+    assert updated_project.description == "safe part of description<p>should not be stripped</p>"
 
 
 @pytest.mark.django_db
