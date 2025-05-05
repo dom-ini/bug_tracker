@@ -1,5 +1,5 @@
 from django.urls import path
-from issues.views.attachments import (
+from issues.views.attachment import (
     AttachmentDetailDeleteView,
     CommentAttachmentListCreateView,
     IssueAttachmentListCreateView,

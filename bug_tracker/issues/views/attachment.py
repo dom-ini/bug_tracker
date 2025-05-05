@@ -8,9 +8,9 @@ from django.db.models import QuerySet
 from drf_spectacular.utils import extend_schema
 from issues.models import IssueAttachment
 from issues.serializers.attachments import AttachmentDetailSerializer, AttachmentListSerializer
-from issues.services.command_attachments import attachment_add_to_comment, attachment_add_to_issue, attachment_remove
+from issues.services.command_attachment import attachment_add_to_comment, attachment_add_to_issue, attachment_remove
 from issues.services.exceptions import CommentActionNotPermitted, IssueActionNotPermitted
-from issues.services.query_attachments import attachment_get, attachment_list_for_comment, attachment_list_for_issue
+from issues.services.query_attachment import attachment_get, attachment_list_for_comment, attachment_list_for_issue
 from issues.services.query_comment import comment_get
 from issues.services.query_issue import issue_get
 from rest_framework import serializers, status, views
