@@ -1,13 +1,11 @@
 from auditlog.models import LogEntry
 from core.pagination import LimitOffsetPagination, get_paginated_response
 from core.serializers import CommaSeparatedMultipleChoiceField
-from core.services import query_or_404
 from drf_spectacular.utils import extend_schema
 from issues.filters import IssueHistoryOrdering
 from issues.models import HistoryEntrySubject
 from issues.serializers.history import HistoryEntryListSerializer
 from issues.services.query_history import history_list
-from issues.services.query_issue import issue_get
 from rest_framework import serializers, views
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -33,9 +31,7 @@ class HistoryListView(views.APIView):
         filters_serializer = self.FilterSerializer(data=request.query_params)
         filters_serializer.is_valid(raise_exception=True)
 
-        issue = query_or_404(issue_get, issue_id=issue_id, user=self.request.user)
-
-        history = history_list(issue=issue, filters=filters_serializer.validated_data)
+        history = history_list(issue_id=issue_id, user=request.user, filters=filters_serializer.validated_data)
 
         return get_paginated_response(
             pagination_class=self.Pagination,
