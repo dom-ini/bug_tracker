@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+import re
 from datetime import timedelta
 from pathlib import Path
 
@@ -53,6 +54,7 @@ INSTALLED_APPS = [
     "django_filters",
     "axes",
     "auditlog",
+    "corsheaders",
     "core",
     "users",
     "projects",
@@ -62,6 +64,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -300,3 +303,6 @@ ATTACHMENTS_ALLOWED_FILE_TYPES = {
     "txt": "text/plain",
 }
 ATTACHMENTS_MAX_SIZE = config("ATTACHMENTS_MAX_SIZE", default=1024 * 1024 * 10)
+
+CORS_URLS_REGEX = r"^/api/.*$"
+CORS_ALLOWED_ORIGIN_REGEXES = [rf"^https?://([-a-zA-Z0-9_]+\.)*{re.escape(config("FRONT_DOMAIN"))}$"]
