@@ -5,7 +5,7 @@ from projects.services.command_member import member_add_to_project
 from projects.services.query_member import member_get
 from tests.factories import fake_user
 
-pytestmark = pytest.mark.unit
+pytestmark = pytest.mark.integration
 
 
 @pytest.mark.django_db
