@@ -34,6 +34,9 @@ Before you launch the project, add the following entries to your hosts file (use
 127.0.0.1      media.bugtracker.local
 ```
 
+Inside the project directory, create a `.env` file (or `.env.prod` for the production environment) and provide the required configuration values.\
+You can refer to the `.env.example` file for the list of required variables.
+
 Next, start the app using one of the following:
 
 * #### Development:
