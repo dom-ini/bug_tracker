@@ -17,6 +17,7 @@ from pathlib import Path
 from core.url_resolver import FrontendUrlType
 from decouple import Csv, config
 from dj_database_url import parse as db_url
+from django.utils.translation import gettext_lazy as _
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -170,8 +171,8 @@ DEFAULT_RENDERER_CLASSES = [
 ]
 
 SPECTACULAR_SETTINGS = {
-    "TITLE": "Your Project API",
-    "DESCRIPTION": "Your project description",
+    "TITLE": _("Issue Tracker API"),
+    "DESCRIPTION": _("API for an issue tracking system where users can manage projects, members, and issues."),
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
     "SWAGGER_UI_DIST": "SIDECAR",
